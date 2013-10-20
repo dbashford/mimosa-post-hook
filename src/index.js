@@ -1,8 +1,16 @@
-var async = require('async'),
-    logger = require('logmimosa');
+var async = require( 'async' ),
+    logger = require( 'logmimosa' ),
+    config = require( './config' );
 
 var _execute = function( mimosaConfig, options, next ) {
-  logger.debug( "Going to execute the following commands: ", mimosaConfig.postHook.commands);
+  var commands = mimosaConfig.postHook.commands;
+  if ( commands ) {
+    async.eachSeries( commands, function( command, cb ) {
+      console.log( "will execute command: ", command )
+      cb()
+    });
+  }
+
   next();
 };
 
