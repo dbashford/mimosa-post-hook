@@ -1,4 +1,18 @@
 mimosa-post-hook
-================
+===========
+## Overview
 
-A mimosa module to allow for execution of scripts/commands after 'mimosa watch' starts up.
+For more information regarding Mimosa, see http://mimosa.io.
+
+## Usage
+
+Add `'post-hook'` to your list of modules.  That's all!  Mimosa will install the module for you when you start up.
+
+## Functionality
+
+## Default Config
+
+```
+postHook:
+  commands: []
+```
