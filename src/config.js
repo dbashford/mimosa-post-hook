@@ -20,7 +20,12 @@ exports.placeholder = function () {
 exports.validate = function ( config, validators ) {
   var errors = [];
   if ( validators.ifExistsIsObject( errors, "postHook config", config.postHook ) ) {
-    validators.ifExistsIsArrayOfStrings( errors, "postHook.commands", config.postHook.commands );
+    if ( validators.ifExistsIsArray( errors, "postHook.commands", config.postHook.commands ) ) {
+      config.postHook.commands.forEach( function( command ) {
+        validators.stringMustExist( errors, "postHook.commands.command", command.command );
+        validators.ifExistsIsBoolean( errors, "postHook.commands.persistent", command.persistent );
+      });
+    }
   }
 
   return errors;
