@@ -5,21 +5,6 @@ var cp = require('child_process'),
     logger = require( 'logmimosa' ),
     config = require( './config' );
 
-var _execute = function( mimosaConfig, options, next ) {
-  var commands = mimosaConfig.postHook.commands;
-  if ( commands ) {
-    async.eachSeries( commands, function( command, cb ) {
-      if (command.persistent) {
-        _spawn( command.command, cb );
-      } else {
-        _exec( command.command, cb );
-      }
-    });
-  }
-
-  next();
-};
-
 // for those that end right away
 var _exec = function( command, cb ) {
   exec( command, function ( error, stdout, stderr ) {
@@ -27,7 +12,7 @@ var _exec = function( command, cb ) {
       logger.error( "Error occurred executing command [[ " + command + " ]]" );
       console.log( error );
     } else {
-      if (stdout && stdout.length > 0) {
+      if ( stdout && stdout.length > 0 ) {
         logger.info( stdout );
       }
       logger.success( "Command [[ " + command + " ]] ended");
@@ -64,6 +49,21 @@ var _spawn = function( command, cb ) {
   });
 
   cb();
+};
+
+var _execute = function( mimosaConfig, options, next ) {
+  var commands = mimosaConfig.postHook.commands;
+  if ( commands ) {
+    async.eachSeries( commands, function( command, cb ) {
+      if (command.persistent) {
+        _spawn( command.command, cb );
+      } else {
+        _exec( command.command, cb );
+      }
+    });
+  }
+
+  next();
 };
 
 var registration = function( mimosaConfig, register ) {
