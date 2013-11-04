@@ -22,14 +22,21 @@ var _exec = function( command, cb ) {
 };
 
 // for long running
-var _spawn = function( command, cb ) {
+var _spawn = function( command, callbackOn, cb ) {
   var commandPieces = command.split( ' ' ),
       commandStart = commandPieces.splice( 0, 1 )[0],
       error = null,
       cmd = spawn( commandStart, commandPieces );
 
   cmd.stdout.on( 'data', function( buffer ){
-    console.log( buffer.toString() );
+    var outStr = buffer.toString();
+    console.log( outStr );
+    if ( cb && typeof callbackOn === "string" ) {
+      if ( outStr.indexOf( callbackOn ) > -1 ) {
+        cb();
+        cb = undefined;
+      }
+    }
   });
 
   cmd.stderr.on( 'error', function( buffer ){
@@ -48,7 +55,13 @@ var _spawn = function( command, cb ) {
     }
   });
 
-  cb();
+  if ( callbackOn ) {
+    if ( typeof callbackOn === "number" ) {
+      setTimeout(cb, callbackOn);
+    }
+  } else {
+    cb();
+  }
 };
 
 var _execute = function( mimosaConfig, options, next ) {
@@ -56,18 +69,18 @@ var _execute = function( mimosaConfig, options, next ) {
   if ( commands ) {
     async.eachSeries( commands, function( command, cb ) {
       if (command.persistent) {
-        _spawn( command.command, cb );
+        _spawn( command.command, command.callbackOn, cb );
       } else {
         _exec( command.command, cb );
       }
-    });
+    }, next);
+  } else {
+    next();
   }
-
-  next();
 };
 
 var registration = function( mimosaConfig, register ) {
-  register( [ 'postBuild' ], 'complete', _execute );
+  register( [ 'postBuild' ], mimosaConfig.postHook.workflowStep, _execute );
 };
 
 module.exports = {

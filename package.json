@@ -1,6 +1,6 @@
 {
   "name": "mimosa-post-hook",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/dbashford/mimosa-post-hook",
   "author": "David Bashford",
   "description": "A mimosa module to allow for execution of scripts/commands after 'mimosa watch' starts up.",
