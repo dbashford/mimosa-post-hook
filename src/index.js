@@ -1,9 +1,11 @@
 var cp = require('child_process'),
     spawn = cp.spawn,
     exec = cp.exec,
+
     async = require( 'async' ),
-    logger = require( 'logmimosa' ),
-    config = require( './config' );
+    config = require( './config' ),
+
+    logger = null;
 
 // for those that end right away
 var _exec = function( command, cb ) {
@@ -80,6 +82,7 @@ var _execute = function( mimosaConfig, options, next ) {
 };
 
 var registration = function( mimosaConfig, register ) {
+  logger = mimosaConfig.log;
   register( [ 'postBuild' ], mimosaConfig.postHook.workflowStep, _execute );
 };
 
