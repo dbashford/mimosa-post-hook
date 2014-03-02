@@ -1,9 +1,11 @@
-var cp = require('child_process'),
+"use strict";
+
+var cp = require( "child_process" ),
     spawn = cp.spawn,
     exec = cp.exec,
 
-    async = require( 'async' ),
-    config = require( './config' ),
+    async = require( "async" ),
+    config = require( "./config" ),
 
     logger = null;
 
@@ -12,7 +14,7 @@ var _exec = function( command, cb ) {
   exec( command, function ( error, stdout, stderr ) {
     if ( error ) {
       logger.error( "Error occurred executing command [[ " + command + " ]]" );
-      console.log( error );
+      logger.error( error );
     } else {
       if ( stdout && stdout.length > 0 ) {
         logger.info( stdout );
@@ -25,13 +27,14 @@ var _exec = function( command, cb ) {
 
 // for long running
 var _spawn = function( command, callbackOn, cb ) {
-  var commandPieces = command.split( ' ' ),
+  var commandPieces = command.split( " " ),
       commandStart = commandPieces.splice( 0, 1 )[0],
       error = null,
       cmd = spawn( commandStart, commandPieces );
 
-  cmd.stdout.on( 'data', function( buffer ){
+  cmd.stdout.on( "data", function( buffer ){
     var outStr = buffer.toString();
+    /* eslint no-console:0 */
     console.log( outStr );
     if ( cb && typeof callbackOn === "string" ) {
       if ( outStr.indexOf( callbackOn ) > -1 ) {
@@ -41,17 +44,17 @@ var _spawn = function( command, callbackOn, cb ) {
     }
   });
 
-  cmd.stderr.on( 'error', function( buffer ){
+  cmd.stderr.on( "error", function( buffer ){
     if ( !error ) {
-      error = '';
+      error = "";
     }
     error += buffer.toString();
   });
 
-  cmd.on( 'close', function( code ){
+  cmd.on( "close", function( code ){
     if ( error ) {
       logger.error( "Error occurred executing command [[ " + command + " ]]" );
-      console.log( error );
+      logger.error( error );
     } else {
       logger.success( "Command [[ " + command + " ]] ended");
     }
@@ -83,7 +86,7 @@ var _execute = function( mimosaConfig, options, next ) {
 
 var registration = function( mimosaConfig, register ) {
   logger = mimosaConfig.log;
-  register( [ 'postBuild' ], mimosaConfig.postHook.workflowStep, _execute );
+  register( [ "postBuild" ], mimosaConfig.postHook.workflowStep, _execute );
 };
 
 module.exports = {

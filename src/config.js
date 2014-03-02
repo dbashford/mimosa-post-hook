@@ -14,10 +14,10 @@ exports.defaults = function() {
 };
 
 exports.placeholder = function () {
-  var ph = "\n\n  # postHook:        # config for postHook module\n" +
-      "    # workflowStep: \"complete\"  # the 'postBuild' workflow step during which to execute \n" +
+  var ph = "\n\n  postHook:        # config for postHook module\n" +
+      "    workflowStep: \"complete\"  # the 'postBuild' workflow step during which to execute \n" +
       "                     # the commands \n" +
-      "    # commands: []   # A list of objects. Three properties in those objects. 'command' is the \n" +
+      "    commands: []     # A list of objects. Three properties in those objects. 'command' is the \n" +
       "                     # command to execute. 'persistent' is a flag that indicates whether or \n" +
       "                     # not the command results in something that stays running. 'callbackOn' \n" +
       "                     # indicates when to continue with mimosa processing when the command is \n" +
@@ -45,14 +45,10 @@ exports.validate = function ( config, validators ) {
 
     if ( validators.isString( errors, "postHook.workflowStep", config.postHook.workflowStep ) ) {
       if ( steps.indexOf(config.postHook.workflowStep) === -1 ) {
-        errors.push("postHook.workflowStep must be one of the following: " + steps.join(',') + ".");
+        errors.push("postHook.workflowStep must be one of the following: " + steps.join(",") + ".");
       }
     }
   }
 
   return errors;
 };
-
-
-
-
